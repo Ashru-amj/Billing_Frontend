@@ -10,7 +10,7 @@ const CompanyPage = () => {
     <div className=" px-0 w-full">
       <header className="bg-blue-800 text-white shadow-md">
         <div className="container mx-auto p-4 flex justify-between items-center">
-          <img src={image} alt="Company Logo" className="h-16 w-20 rounded" />
+          <img src={image} alt="Company Logo add" className="h-16 w-20 rounded" />
           <nav>
             <ul className="flex space-x-4">
               <li>
