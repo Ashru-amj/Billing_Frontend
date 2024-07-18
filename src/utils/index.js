@@ -6,8 +6,8 @@ import {
   uploadBytesResumable,
 } from "firebase/storage";
 
-// export const APP_URL = "https://sphere-bills-backend.onrender.com/api";
-export const APP_URL = "http://localhost:5001/api";
+export const APP_URL = "https://billing-backend-qc1s.onrender.com/api";
+// export const APP_URL = "http://localhost:5001/api";
 
 export const reg = /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/;
 
