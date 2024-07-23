@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { FaFacebook, FaLinkedin, FaTwitter } from "react-icons/fa";
 import HelpDesk from "../components/HelpDesk";
 import { APP_URL } from "../utils";
+import toast, { Toaster } from 'react-hot-toast';
 
 const HelpPage = () => {
   const [name, setName] = useState("");
@@ -24,14 +25,14 @@ const HelpPage = () => {
         email,
         message,
       });
-      alert("Question submitted successfully!");
+      toast.success("Question submitted successfully!");
       console.log(response.data);
       setName("")
       setEmail("")
       setMessage("");
     } catch (error) {
-      console.error("Error submitting feedback:", error);
-      alert(
+      toast.error("Error submitting feedback:", error);
+      toast.error(
         "An error occurred while submitting feedback. Please try again later."
       );
     }
@@ -39,6 +40,7 @@ const HelpPage = () => {
 
   return (
     <div className=" w-full bg-gray-100 flex  justify-center  items-center">
+    <Toaster position="top-center"/>
       <div className=" w-full items-center bg-white shadow-lg rounded-lg">
         <div className=" p-4 m-4 w-full">
           <h1 className="text-3xl font-semibold mb-4">Need Help?</h1>

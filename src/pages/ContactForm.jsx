@@ -2,6 +2,7 @@ import { useState } from "react";
 import useStore from "../store";
 import axios from "axios";
 import { APP_URL } from "../utils";
+import toast, { Toaster } from 'react-hot-toast';
 
 const Contact = () => {
   const { user } = useStore();
@@ -11,33 +12,29 @@ const Contact = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // TODO feedback form
     
     const url = `${APP_URL}/utils/feedback`;
     try {
-      const response =await axios.post(url, { fullName: name, userId:user?.user._id, email, message },
-        {
-          headers: {
-            Authorization: `Bearer ${user?.token}`,
-          },
-        }
-      );
-      alert("Feedback submitted successfully!");
+      const response = await axios.post(url, { fullName: name, userId: user?.user._id, email, message }, {
+        headers: {
+          Authorization: `Bearer ${user?.token}`,
+        },
+      });
+      toast.success("Feedback submitted successfully!");
       console.log(response.data)
       // Optionally, you can clear the form fields after submission
       setMessage("");
     } catch (error) {
       console.error("Error submitting feedback:", error);
-      alert(
-        "An error occurred while submitting feedback. Please try again later."
-      );
+      toast.error("feedback is not Submitted Check it.");
     }
   };
 
   return (
     <>
+      <Toaster position="top-center" />
       <div className="w-full h-full flex flex-col">
-        <div className="relative flex flex-col justify-center  overflow-hidden">
+        <div className="relative flex flex-col justify-center overflow-hidden">
           <div className="w-full px-6 m-auto bg-white rounded-md shadow-md lg:max-w-xl">
             <h1 className="text-2xl font-semibold text-center text-gray-700">
               Feedback form
@@ -91,7 +88,7 @@ const Contact = () => {
                 <textarea
                   rows="4"
                   cols="50"
-                  type="email"
+                  type="text"
                   id="message"
                   value={message}
                   onChange={(e) => {
@@ -99,7 +96,7 @@ const Contact = () => {
                   }}
                   name="message"
                   className="mt-1 p-2 w-full border rounded-md focus:ring focus:ring-blue-300"
-                  placeholder="Feed back"
+                  placeholder="Feedback"
                 />
               </div>
 

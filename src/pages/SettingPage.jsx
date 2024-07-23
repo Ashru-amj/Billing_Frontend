@@ -7,8 +7,9 @@ import {
   HiOutlineX,
 } from "react-icons/hi";
 import { MdOutlinePrivacyTip } from "react-icons/md";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 import { APP_URL } from "../utils";
+import toast, { Toaster } from 'react-hot-toast';
 
 const SettingsPage = () => {
   const user = useSelector((state) => state.user.user);
@@ -17,9 +18,6 @@ const SettingsPage = () => {
     oldpassword: "",
     newpassword: "",
   });
-
-  
-  
 
   const handleSaving = async (e) => {
     e.preventDefault();
@@ -45,15 +43,36 @@ const SettingsPage = () => {
         oldpassword: "",
         newpassword: "",
       });
-      alert(response?.data?.message);
+      toast.success(response?.data?.message, {
+        style: {
+          border: '1px solid #4caf50',
+          padding: '16px',
+          color: '#4caf50',
+        },
+        iconTheme: {
+          primary: '#4caf50',
+          secondary: '#FFFAEE',
+        },
+      });
     } catch (error) {
-      console.error("Error registering user:", error);
-      throw error;
+      console.error("Error resetting password:", error);
+      toast.error("An error occurred while resetting the password. Please try again later.", {
+        style: {
+          border: '1px solid #f44336',
+          padding: '16px',
+          color: '#f44336',
+        },
+        iconTheme: {
+          primary: '#f44336',
+          secondary: '#FFFAEE',
+        },
+      });
     }
   };
 
   return (
     <div className="container mx-auto p-4">
+      <Toaster position="top-center" reverseOrder={false} />
       <h1 className="text-3xl font-bold mb-8">Settings</h1>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -64,15 +83,14 @@ const SettingsPage = () => {
             <h2 className="text-lg font-semibold">Account</h2>
           </div>
           {/* Individual Account Settings Items */}
-          {/* Username */}
           <form onSubmit={handleSaving}>
             <div className="mb-4">
-              <label htmlFor="username" className="block font-medium mb-2">
+              <label htmlFor="email" className="block font-medium mb-2">
                 Email
               </label>
               <input
-                id="username"
-                type="text"
+                id="email"
+                type="email"
                 className="block w-full border border-gray-300 rounded-md p-2"
                 value={accountSettings.email}
                 onChange={(e) =>
@@ -90,7 +108,7 @@ const SettingsPage = () => {
               </label>
               <input
                 id="oldpassword"
-                type="text"
+                type="password"
                 className="block w-full border border-gray-300 rounded-md p-2"
                 value={accountSettings.oldpassword}
                 onChange={(e) =>
@@ -108,8 +126,7 @@ const SettingsPage = () => {
               </label>
               <input
                 id="newpassword"
-                type="text"
-                required
+                type="password"
                 className="block w-full border border-gray-300 rounded-md p-2"
                 value={accountSettings.newpassword}
                 onChange={(e) =>
@@ -118,13 +135,14 @@ const SettingsPage = () => {
                     newpassword: e.target.value,
                   })
                 }
+                required
               />
             </div>
             <button
               className="bg-blue-500 text-white px-4 py-2 rounded-md mr-2"
               type="submit"
             >
-              Update
+              <HiOutlineSave className="inline-block mr-1" /> Update
             </button>
           </form>
         </div>
@@ -180,7 +198,6 @@ const SettingsPage = () => {
           <ul className="list-disc ml-6 mb-4">
             <li>Never share your password with anyone.</li>
             <li>Use strong, unique passwords for each account.</li>
-
             <li>
               Avoid using public Wi-Fi networks for sensitive transactions.
             </li>
