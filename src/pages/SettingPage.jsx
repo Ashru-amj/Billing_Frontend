@@ -17,6 +17,8 @@ const SettingsPage = () => {
     oldpassword: "",
     newpassword: "",
   });
+
+  
   
 
   const handleSaving = async (e) => {
@@ -191,22 +193,6 @@ const SettingsPage = () => {
           </p>
         </div>
       </div>
-
-      {/* Save and Cancel Buttons */}
-      {/* <div className="flex justify-end mt-8">
-        <button
-          className="bg-blue-500 text-white px-4 py-2 rounded-md mr-2"
-          onClick={handleSave}
-        >
-          <HiOutlineSave className="mr-2 w-6 h-6" /> Save
-        </button>
-        <button
-          className="bg-gray-300 text-gray-700 px-4 py-2 rounded-md"
-          onClick={handleCancel}
-        >
-          <HiOutlineX className="mr-2 w-6 h-6" /> Cancel
-        </button>
-      </div> */}
     </div>
   );
 };

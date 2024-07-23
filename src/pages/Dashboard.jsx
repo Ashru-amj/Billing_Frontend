@@ -5,9 +5,11 @@ import ExpenceChart from "../components/chart/ExpenceChart";
 
 const Dashboard = () => {
   const [activeSection, setActiveSection] = useState("sales");
+
   useEffect(() => {
-    console.log(activeSection)
+    console.log(activeSection);
   }, [activeSection]);
+
   const renderActiveSection = () => {
     switch (activeSection) {
       case "sales":
@@ -20,12 +22,16 @@ const Dashboard = () => {
         return null;
     }
   };
+
   return (
     <div>
       Dashboard
       <div>
         <div className="flex justify-center space-x-4 mt-4">
           <button
+            className={`${
+              activeSection === "sales" ? "bg-blue-500" : "bg-red-500"
+            } py-2 px-4 rounded`}
             onClick={() => {
               setActiveSection("sales");
             }}
@@ -33,6 +39,9 @@ const Dashboard = () => {
             Sales
           </button>
           <button
+            className={`${
+              activeSection === "purchase" ? "bg-blue-500" : "bg-red-500"
+            } py-2 px-4 rounded`}
             onClick={() => {
               setActiveSection("purchase");
             }}
@@ -40,6 +49,9 @@ const Dashboard = () => {
             Purchase
           </button>
           <button
+            className={`${
+              activeSection === "expence" ? "bg-blue-500" : "bg-red-500"
+            } py-2 px-4 rounded`}
             onClick={() => {
               setActiveSection("expence");
             }}

@@ -10,6 +10,9 @@ import {
 } from "../store/salesItem";
 import { addSales, removeSaleItem, clearSales } from "../store/saleSlice";
 import { Link } from "react-router-dom";
+// import { toast, ToastContainer } from "react-toastify";
+// import "react-toastify/dist/ReactToastify.css";
+
 
 const CreateSaleOrder = () => {
   const salesItem = useSelector((state) => state.salesItem).salesItem;
@@ -48,6 +51,8 @@ const CreateSaleOrder = () => {
     tax: "",
   });
 
+  
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({
@@ -55,6 +60,18 @@ const CreateSaleOrder = () => {
       [name]: value,
     });
   };
+
+  const handlePhoneNoChange = (e) => {
+    const value = e.target.value;
+    // Remove any non-numeric characters and arithmetic symbols
+    const numericValue = value.replace(/[^0-9]/g, "");
+    // Ensure the input is not longer than 10 digits
+    if (numericValue.length <= 10) {
+      setPhoneNo(numericValue);
+    }
+  };
+
+  
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -135,6 +152,9 @@ const CreateSaleOrder = () => {
   useEffect(() => {
     setPurchaseOrders(salesItem);
   }, [handleDelete]);
+
+
+
   const handleTransaction = (e) => {
     e.preventDefault();
     if (phoneNo) {
@@ -161,18 +181,61 @@ const CreateSaleOrder = () => {
     setOrderNo(orderNo + 1);
   };
 
+
+
+  // const handleTransaction = async (e) => {
+  //   e.preventDefault();
+  //   if (phoneNo && !(phoneNo.length >= 10 && phoneNo.length <= 13)) {
+  //     toast.error("Please provide a valid phone number");
+  //     return;
+  //   }
+
+  //   const obj = {
+  //     party: partyName,
+  //     number: orderNo,
+  //     date: orderDate || new Date().toLocaleDateString(),
+  //     dueDate: dueDate || new Date().toLocaleDateString(),
+  //     totalAmount: totalAmount,
+  //     balance: totalAmount,
+  //     type: paymentType,
+  //     status: paymentStatus,
+  //   };
+
+  //   dispatch(addSales(obj));
+
+  //   toast.success("Sale item added Successfully.");
+  //   setPartyData(obj);
+  //   setOrderNo(orderNo + 1);
+  // };
+
+
   const handleClear = () => {
-    dispatch(clearsalesItem());
+    dispatch(clearsalesItem()); // Clear sales items in Redux store
+    dispatch(clearSales()); // Clear sales data in Redux store
+  
+    // Reset all local state values
     setTotalAmount(0);
     setTotalQuantity(0);
     setPartyName("");
-
-    setDueDate("");
-    // setBalance(0);
-    setPaymentType("Sale");
-    setOrderNo(Number(transctionData[transctionData.length - 1].number) + 1 || 1);
     setPhoneNo("");
+    setDueDate("");
+    setOrderDate("");
+    setPaymentType("Cash");
+    setPaymentStatus("Paid");
+  
+    // Reset order number to the next sequential number
+    setOrderNo(Number(salesData[salesData.length - 1]?.number) + 1 || 1);
+  
+    // Reset form data state
+    setFormData({
+      item: "",
+      qty: "",
+      unit: "",
+      pricePerUnit: "",
+      tax: "",
+    });
   };
+  
   return (
     <div className="w-full p-2">
       <h2 className=" text-3xl pb-3">Sales Order</h2>
@@ -181,12 +244,19 @@ const CreateSaleOrder = () => {
         <form onSubmit={handleTransaction}>
           <div className="flex justify-end items-center gap-4">
             <div className="flex items-center justify-end">
-              <button
+              {/* <button
                 type="submit"
                 className="w-20 py-2 px-4 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring focus:ring-blue-300"
+              
               >
                 Save
-              </button>
+              </button> */}
+              <button
+            onClick={handleClear}
+            className="bg-blue-500 hover:bg-blue-700 text-white font-bold m-3 py-2 px-4 rounded"
+          >
+            Clear All
+          </button>
             </div>
             <div className="flex items-center justify-end">
               <Link
@@ -223,7 +293,7 @@ const CreateSaleOrder = () => {
                     name="phoneNo"
                     className="w-full px-4 py-2 border-2 rounded-md"
                     value={phoneNo}
-                    onChange={(e) => setPhoneNo(e.target.value)}
+                    onChange={handlePhoneNoChange}
                     placeholder="Enter phone Number"
                     minLength="10"
                   />
@@ -279,12 +349,12 @@ const CreateSaleOrder = () => {
           </div>
         </form>
         <div className="flex items-center justify-end">
-          <button
+          {/* <button
             onClick={handleClear}
             className="bg-blue-500 hover:bg-blue-700 text-white font-bold m-3 py-2 px-4 rounded"
           >
             Clear All
-          </button>
+          </button> */}
         </div>
         <hr />
         <div className="flex items-center w-full justify-center p-4">
@@ -292,15 +362,15 @@ const CreateSaleOrder = () => {
             <table className="w-full border-collapse border border-gray-200">
               <thead className="bg-gray-100">
                 <tr>
-                  <th className="border border-gray-200 px-4 py-2">Sl No</th>
-                  <th className="border border-gray-200 px-4 py-2">Item</th>
-                  <th className="border border-gray-200 px-4 py-2">Qty</th>
-                  <th className="border border-gray-200 px-4 py-2">Unit</th>
+                  <th className="border border-gray-200 px-4 py-2" >Sl No</th>
+                  <th className="border border-gray-200 px-4 py-2" required>Item</th>
+                  <th className="border border-gray-200 px-4 py-2" required>Qty</th>
+                  <th className="border border-gray-200 px-4 py-2" required>Unit</th>
                   <th className="border border-gray-200 px-4 py-2">
                     Price/Unit (without GST)
                   </th>
                   <th className="border border-gray-200 px-4 py-2">GST</th>
-                  <th className="border border-gray-200 px-4 py-2">Amount</th>
+                  <th className="border border-gray-200 px-4 py-2" required>Amount</th>
                   <th className="border border-gray-200 px-4 py-2">Delete</th>
                 </tr>
               </thead>
@@ -537,7 +607,13 @@ const CreateSaleOrder = () => {
 
         <hr />
         <div className="flex justify-end w-full">
-          <div className="flex justify-end items-end">
+          <div className="flex justify-end items-end ">
+          <button
+                type="submit"
+                className="w-20 m-3 py-2 px-4 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring focus:ring-blue-300"
+              >
+                Save
+              </button>
             <Link
               to={"/create-sales-bills"}
               className="bg-blue-500 hover:bg-blue-700 text-white font-bold m-3 py-2 px-4 rounded"
