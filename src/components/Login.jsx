@@ -5,6 +5,7 @@ import axios from "axios";
 import { useDispatch } from "react-redux";
 import { setUser } from "../store/userSlice";
 import { APP_URL, reg } from "../utils";
+import toast, { Toaster } from 'react-hot-toast';
 
 const Signin = () => {
   const [email, setEmail] = useState("");
@@ -16,37 +17,38 @@ const Signin = () => {
     e.preventDefault();
     console.log(email, password);
     if (!reg.test(email)) {
-      alert("Please provide a valid email.");
+      toast.error("Please provide a valid email.");
       return;
     }
     const url = `${APP_URL}/user/login`;
-    try {
-      const response = await axios.post(url, {
-        email,
-        password,
-      });
 
-      console.log(response.data);
-      setEmail("");
-      setPassword("");
-      alert(response.data.message);
-
-      if (response.data.success) {
-        console.log(response.data.user);
-        dispatch(setUser(response.data));
-        
-        setTimeout(() => {
-          navigate("/dashboard");
-        }, 100);
-      } 
-    } catch (error) {
-      console.error("Error registering user:", error);
-      throw error;
-    }
+    // Use toast.promise to handle async operation
+    toast.promise(
+      axios.post(url, { email, password }),
+      {
+        loading: "Logging in...",
+        success: (response) => {
+          setEmail("");
+          setPassword("");
+          if (response.data.success) {
+            dispatch(setUser(response.data));
+            setTimeout(() => {
+              navigate("/dashboard");
+            }, 200); // Adjust timing if needed
+          }
+          return response.data.message;
+        },
+        error: (error) => {
+          console.error("Error logging in:", error.message);
+          return "Add your credential data correctly.";
+        },
+      }
+    );  
   };
 
   return (
     <div className="relative flex flex-col justify-center min-h-screen overflow-hidden">
+      <Toaster position="top-center" /> {/* Ensure Toaster is at the top-right */}
       <div className="w-full p-6 m-auto bg-white rounded-md shadow-md lg:max-w-xl">
         <div className="flex items-center justify-center my-6">
           <Logo />
@@ -67,9 +69,7 @@ const Signin = () => {
               id="email"
               name="email"
               value={email}
-              onChange={(e) => {
-                setEmail(e.target.value);
-              }}
+              onChange={(e) => setEmail(e.target.value)}
               className="mt-1 p-2 w-full border rounded-md focus:ring focus:ring-blue-300"
               placeholder="Enter your email"
               required
@@ -87,9 +87,7 @@ const Signin = () => {
               id="password"
               name="password"
               value={password}
-              onChange={(e) => {
-                setPassword(e.target.value);
-              }}
+              onChange={(e) => setPassword(e.target.value)}
               className="mt-1 p-2 w-full border rounded-md focus:ring focus:ring-blue-300"
               placeholder="Enter your password"
               required

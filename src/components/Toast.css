@@ -1,0 +1,30 @@
+/* toastStyles.css */
+.toast {
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+  }
+  
+  .toast.success {
+    background-color: #4caf50; /* Green background for success */
+    color: white; /* White text color */
+  }
+  
+  .toast.error {
+    background-color: #f44336; /* Red background for error */
+    color: white; /* White text color */
+  }
+  
+  .toast.info {
+    background-color: #2196f3; /* Blue background for info */
+    color: white; /* White text color */
+  }
+  
+  .toast.warning {
+    background-color: #ff9800; /* Orange background for warning */
+    color: white; /* White text color */
+  }
+  
+  .toast-container {
+    margin-top: 20px; /* Space from the top */
+  }
+  

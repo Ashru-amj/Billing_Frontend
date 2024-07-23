@@ -12,6 +12,7 @@ export const APP_URL = "https://billing-backend-qc1s.onrender.com/api";
 export const reg = /^([A-Za-z0-9_\-\.])+\@([A-Za-z0-9_\-\.])+\.([A-Za-z]{2,4})$/;
 
 
+
 export const validateName = (name) => {
   // Basic validation: Check if the name is not empty
   const isNotEmpty = name.trim() !== "";
@@ -27,36 +28,47 @@ export const validateName = (name) => {
   return isNotEmpty && isValidFormat;
 };
 
+// export const validatePassword = (password) => {
+//   const errors = [];
+
+//   // Check password length
+//   if (password.length < 8) {
+//     errors.push("Password must be at least 8 characters long");
+//   }
+
+//   // Check for uppercase letters
+//   if (!/[A-Z]/.test(password)) {
+//     errors.push("Password must contain at least one uppercase letter");
+//   }
+
+//   // Check for lowercase letters
+//   if (!/[a-z]/.test(password)) {
+//     errors.push("Password must contain at least one lowercase letter");
+//   }
+
+//   // Check for numbers
+//   if (!/\d/.test(password)) {
+//     errors.push("Password must contain at least one number");
+//   }
+
+//   // Check for special characters
+//   if (!/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password)) {
+//     errors.push("Password must contain at least one special character");
+//   }
+
+//   return errors;
+// };
+
 export const validatePassword = (password) => {
   const errors = [];
 
-  // Check password length
-  if (password.length < 8) {
-    errors.push("Password must be at least 8 characters long");
-  }
-
-  // Check for uppercase letters
-  if (!/[A-Z]/.test(password)) {
-    errors.push("Password must contain at least one uppercase letter");
-  }
-
-  // Check for lowercase letters
-  if (!/[a-z]/.test(password)) {
-    errors.push("Password must contain at least one lowercase letter");
-  }
-
-  // Check for numbers
-  if (!/\d/.test(password)) {
-    errors.push("Password must contain at least one number");
-  }
-
-  // Check for special characters
-  if (!/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password)) {
-    errors.push("Password must contain at least one special character");
+  if (password.length < 8 || !/[A-Z]/.test(password) || !/[a-z]/.test(password) || !/\d/.test(password) || !/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(password)) {
+    errors.push("");
   }
 
   return errors;
 };
+
 
 export const uploadFile =  (setFileUrl, file) => {
   const storage = getStorage(app);

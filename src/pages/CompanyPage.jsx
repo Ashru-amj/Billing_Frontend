@@ -97,29 +97,6 @@ const CompanyPage = () => {
           </p>
         </div>
       </section>
-
-      {/* Products */}
-      {/* <section id="products" className="bg-gray-100 p-8">
-        <div className="container mx-auto">
-          <h2 className="text-4xl font-bold mb-6 text-center">Our Products</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <div className="bg-white p-6 rounded shadow-lg hover:shadow-2xl transition-shadow">
-              <h3 className="text-xl font-bold mb-2">Product 1</h3>
-              <p>A groundbreaking product that revolutionizes the way you do X.</p>
-            </div>
-            <div className="bg-white p-6 rounded shadow-lg hover:shadow-2xl transition-shadow">
-              <h3 className="text-xl font-bold mb-2">Product 2</h3>
-              <p>An innovative solution designed to improve Y.</p>
-            </div>
-            <div className="bg-white p-6 rounded shadow-lg hover:shadow-2xl transition-shadow">
-              <h3 className="text-xl font-bold mb-2">Product 3</h3>
-              <p>A state-of-the-art tool that enhances Z.</p>
-            </div>
-          </div>
-        </div>
-      </section> */}
-
-      {/* Contact */}
       <section id="contact" className="p-8 bg-white">
         <div className="container mx-auto">
           <h2 className="text-4xl font-bold mb-6 text-center">Contact Us</h2>
