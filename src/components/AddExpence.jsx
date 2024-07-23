@@ -126,11 +126,17 @@ const CreateExpence = () => {
         <form className="w-full " onSubmit={saveExpence}>
           <div className="flex justify-end items-center gap-4">
             <div className="flex items-center justify-end">
-              <button
+              {/* <button
                 type="submit"
                 className="w-20 py-2 px-4 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring focus:ring-blue-300"
               >
                 Save
+              </button> */}
+              <button
+                onClick={handleClear}
+                className="bg-blue-500 hover:bg-blue-700 text-white font-bold m-3 py-2 px-4 rounded"
+              >
+                Clear All
               </button>
             </div>
             <div className="flex items-center justify-end">
@@ -217,12 +223,12 @@ const CreateExpence = () => {
         <div className="flex items-center w-full justify-center p-4">
           <div className="w-full mx-auto">
             <div className="flex items-center justify-end">
-              <button
+              {/* <button
                 onClick={handleClear}
                 className="bg-blue-500 hover:bg-blue-700 text-white font-bold m-3 py-2 px-4 rounded"
               >
                 Clear
-              </button>
+              </button> */}
             </div>
             <table className="w-full border-collapse border border-gray-200">
               <thead className="bg-gray-100">
@@ -431,7 +437,14 @@ const CreateExpence = () => {
         </div>
 
         <hr />
+        <div className="flex justify-end w-full">
         <div className="flex justify-end items-end">
+        <button
+                type="submit"
+                className="w-20 m-3 py-2 px-4 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring focus:ring-blue-300"
+              >
+                Save
+              </button>
           <Link
             to={"/create-expence-bills"}
             className="bg-blue-500 hover:bg-blue-700 text-white font-bold m-3 py-2 px-4 rounded"
@@ -439,6 +452,8 @@ const CreateExpence = () => {
           >
             Goto create bills
           </Link>
+        </div>
+         
         </div>
       </div>
     </div>

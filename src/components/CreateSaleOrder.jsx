@@ -256,7 +256,7 @@ const CreateSaleOrder = () => {
             className="bg-blue-500 hover:bg-blue-700 text-white font-bold m-3 py-2 px-4 rounded"
           >
             Clear All
-          </button>
+              </button>
             </div>
             <div className="flex items-center justify-end">
               <Link

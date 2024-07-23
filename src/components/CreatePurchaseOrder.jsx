@@ -4,6 +4,8 @@ import { addPurchase, clearPurchase, removeItem } from "../store/purchaseSlice";
 import { MdDelete } from "react-icons/md";
 import { addTransaction } from "../store/transactionSlice";
 import { Link } from "react-router-dom";
+import { clearpurchaseItem } from "../store/purchaseItem";
+
 
 const CreatePurchaseOrder = () => {
   const purchaseData = useSelector((state) => state.purchase).purchase;
@@ -12,7 +14,7 @@ const CreatePurchaseOrder = () => {
   const [purchaseOrders, setPurchaseOrders] = useState(purchaseData);
   const [orderDate, setOrderDate] = useState("");
   const [orderNo, setOrderNo] = useState(
-    Number(transctionData[transctionData.length - 1]?.number) + 1 ||1
+    Number(transctionData[transctionData.length - 1]?.number) + 1 || 1
   );
   const [addRow, setAddRow] = useState(false);
   const [dueDate, setDueDate] = useState("");
@@ -85,14 +87,15 @@ const CreatePurchaseOrder = () => {
   const paymentMode = ["Cash", "UPI", "Card"];
   useEffect(() => {
     let total = 0;
-    let toatalQty = 0;
+    let totalQty = 0;
     purchaseOrders.forEach((item) => {
       total += item.amount;
-      toatalQty += Number(item.qty);
+      totalQty += Number(item.qty);
     });
-    setTotalQuantity(toatalQty);
+    setTotalQuantity(totalQty);
     setTotalAmount(total);
-  }, [items]);
+  }, [purchaseOrders]); // Dependency on purchaseOrders, not items
+  
 
   const handleDelete = (index) => {
     dispatch(removeItem(index));
@@ -122,20 +125,34 @@ const CreatePurchaseOrder = () => {
     setPurchaseOrders(purchaseData);
   }, [handleTransaction]);
 
+  
+
   const handleClear = () => {
-    dispatch(clearPurchase());
+    dispatch(clearPurchase()); // Clear purchases in Redux store
+    dispatch(clearpurchaseItem()); // Ensure this action exists to clear transactions if needed
+  
+    // Reset all local state values
+    setPurchaseOrders([]);
     setTotalAmount(0);
     setTotalQuantity(0);
-
     setPartyName("");
-
+    setPhoneNo("");
     setDueDate("");
-    // setBalance(0);
+    setOrderDate("");
     setPaymentType("Cash");
     setPaymentStatus("Paid");
-    setOrderNo(Number(transctionData[transctionData.length - 1]?.number) + 1 || 1);
-    setPhoneNo("");
+    setOrderNo(Number(transctionData[transctionData.length - 1]?.number) + 1 || 1); // Assuming `transctionData` is available
+  
+    // Reset form data state
+    setFormData({
+      item: "",
+      qty: "",
+      unit: "",
+      pricePerUnit: "",
+      tax: "",
+    });
   };
+  
 
   useEffect(() => {
     const obj = {
@@ -147,7 +164,7 @@ const CreatePurchaseOrder = () => {
       balance: totalAmount,
       type: paymentType,
       status: paymentStatus,
-      toatalquantity,
+      toatalquantity, // Adjusted spelling here
     };
     setPartyData(obj);
   }, [
@@ -158,22 +175,30 @@ const CreatePurchaseOrder = () => {
     totalAmount,
     paymentStatus,
     paymentType,
+    toatalquantity, // Adjusted spelling here
   ]);
+  
 
   return (
     <div className="w-full p-2">
-      
       <h2 className=" text-3xl pb-3">Purchase Order</h2>
       <hr />
       <div className=" w-full  p-4">
         <form onSubmit={handleTransaction}>
           <div className="flex justify-end items-center gap-4">
             <div className="flex items-center justify-end">
-              <button
+              {/* <button
                 type="submit"
                 className="w-20 py-2 px-4 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring focus:ring-blue-300"
               >
                 Save
+              </button> */}
+
+              <button
+                onClick={handleClear}
+                className="bg-blue-500 hover:bg-blue-700 text-white font-bold m-3 py-2 px-4 rounded"
+              >
+                Clear All
               </button>
             </div>
             <div className="flex items-center justify-end">
@@ -258,12 +283,12 @@ const CreatePurchaseOrder = () => {
         <div className="flex items-center w-full justify-center p-4">
           <div className="w-full mx-auto">
             <div className="flex items-center justify-end">
-              <button
+              {/* <button
                 onClick={handleClear}
                 className="bg-blue-500 hover:bg-blue-700 text-white font-bold m-3 py-2 px-4 rounded"
               >
                 Clear
-              </button>
+              </button> */}
             </div>
             <table className="w-full border-collapse border border-gray-200">
               <thead className="bg-gray-100">
@@ -511,14 +536,22 @@ const CreatePurchaseOrder = () => {
         </div>
 
         <hr />
-        <div className="flex justify-end items-end">
-          <Link
-            to={"/create-purchase-bills"}
-            className="bg-blue-500 hover:bg-blue-700 text-white font-bold m-3 py-2 px-4 rounded"
-            state={{ purchaseOrders, partyData }}
-          >
-            Goto create bills
-          </Link>
+        <div className="flex justify-end w-full">
+          <div className="flex justify-end items-end">
+            <button
+              type="submit"
+              className="w-20 m-3 py-2 px-4 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring focus:ring-blue-300"
+            >
+              Save
+            </button>
+            <Link
+              to={"/create-purchase-bills"}
+              className="bg-blue-500 hover:bg-blue-700 text-white font-bold m-3 py-2 px-4 rounded"
+              state={{ purchaseOrders, partyData }}
+            >
+              Goto create bills
+            </Link>
+          </div>
         </div>
       </div>
     </div>
