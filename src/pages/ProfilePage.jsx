@@ -1,34 +1,105 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import image from "../assets/Logo.png";
-import { states, state } from "../utils/state";
-import { FaEdit } from "react-icons/fa";
+import { states } from "../utils/state";
 import { useSelector } from "react-redux";
-import { Link, useParams } from "react-router-dom";
+import axios from "axios";
 import { APP_URL } from "../utils";
+import { useParams } from "react-router-dom";
 
-const ProfilePage = () => {
-  const { userId } = useParams();
-
+const EditProfile = () => {
+  const user = useSelector((state) => state.user).user;
   const [userData, setUserData] = useState(null);
+
+  const [formValues, setFormValues] = useState(user.user || {});
+  const [phoneError, setPhoneError] = useState("");
+  const [pinError, setPinError] = useState("");
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+
+    if (name === "phoneNo") {
+      if (!/^\d*$/.test(value) || value.length > 10) {
+        setPhoneError("Please enter a valid phone number.");
+      } else {
+        setPhoneError("");
+      }
+    }
+
+    // Pincode validation
+    if (name === "pincode") {
+      if (!/^\d*$/.test(value) || value.length > 6) {
+        setPinError("Please enter a valid pincode.");
+      } else {
+        setPinError("");
+      }
+    }
+
+    setFormValues({ ...formValues, [name]: value });
+  };
+
+  const { userId } = useParams();
 
   const getProfileData = async () => {
     try {
       const response = await axios.get(`${APP_URL}/user/get-profile/` + userId);
+      console.log(response.data);
       setUserData(response.data);
-      return response.data;
+      setFormValues((prevValues) => ({
+        ...prevValues,
+        ...response.data, // Update formValues with fetched data
+      }));
     } catch (error) {
       console.log("error in fetching data", error);
       return null;
     }
   };
+
   useEffect(() => {
     getProfileData();
   }, []);
 
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    // Check if phone number is exactly 10 digits
+    if (formValues?.phoneNo.length !== 10) {
+      setPhoneError("Phone number must be exactly 10 digits.");
+      return;
+    }
+
+    const obj = {
+      userId: user?.user?._id,
+      fullName: user?.user?.fullName,
+      email: user?.user?.email,
+      businessName: formValues?.businessName || "",
+      pincode: formValues?.pincode || "",
+      gstin: formValues?.gstin || "",
+      state: formValues?.state || "",
+      businessAddress: formValues?.businessAddress || "",
+      businessDetails: formValues?.businessDetails || "", // Ensure the correct key is used here
+      phoneNo: formValues?.phoneNo || "",
+    };
+
+    const url = `${APP_URL}/user/update-profile`;
+    const token = user.token;
+
+    try {
+      const response = await axios.put(url, obj, {
+        headers: {
+          Authorization: `Bearer ${user?.token}`,
+        },
+      });
+      console.log(response.data);
+      // Update user data state with the updated response data
+      setUserData(response.data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <div className="w-full justify-between shadow-md p-4 rounded-lg bg-white">
-      <h1 className="text-4xl font-bold mb-2 relative">
+      <h1 className="text-4xl font-bold relative">
         <span
           style={{
             backgroundImage: "linear-gradient(to right, #FFA500, #FF6347)",
@@ -40,17 +111,32 @@ const ProfilePage = () => {
         </span>
       </h1>
       <div className="flex flex-wrap">
-        <div className="w-1/2 pr-4   flex items-center justify-center   ">
+        <div className="w-1/2 pr-4 flex items-center justify-center">
           <img
-            src={userData?.profileUrl || image}
+            src={user?.user?.profileUrl}
             alt="Sample Image"
             style={{ borderRadius: "70%", width: "70%", height: "70%" }}
           />
-          <section className="text-center font-bold mt-4"></section>
         </div>
         <div className="w-1/2 pl-4">
-          <form className="w-full">
+          <form onSubmit={handleSubmit} className="w-full">
             <div className="flex flex-wrap -mx-3">
+              <div className="w-full md:w-1/2 px-3 mb-2">
+                <label
+                  htmlFor="fullName"
+                  className="block uppercase tracking-wide text-gray-700 text-xs font-medium mb-2"
+                >
+                  Full Name
+                </label>
+                <input
+                  type="text"
+                  id="fullName"
+                  name="fullName"
+                  value={formValues.fullName || ""}
+                  className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded-lg py-3 px-4 leading-tight focus:outline-none focus:bg-white"
+                  readOnly
+                />
+              </div>
               <div className="w-full md:w-1/2 px-3 mb-2">
                 <label
                   htmlFor="businessName"
@@ -62,14 +148,14 @@ const ProfilePage = () => {
                   type="text"
                   id="businessName"
                   name="businessName"
-                  value={userData?.fullName || ""}
-                  // onChange={handleInputChange}
+                  value={
+                    formValues.businessName || userData?.businessName || ""
+                  }
+                  onChange={handleInputChange}
                   className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded-lg py-3 px-4 leading-tight focus:outline-none focus:bg-white"
-                  placeholder="Please Edit your profile"
-                  readOnly
                 />
               </div>
-              <div className="w-full md:w-1/2 px-3 mb-2">
+              <div className="w-full md:w-1/2 px-3">
                 <label
                   htmlFor="gstin"
                   className="block uppercase tracking-wide text-gray-700 text-xs font-medium mb-2"
@@ -80,13 +166,12 @@ const ProfilePage = () => {
                   type="text"
                   id="gstin"
                   name="gstin"
-                  value={userData?.gstin || ""}
-                  placeholder="Please Edit your profile"                  // onChange={handleInputChange}
+                  value={formValues.gstin || ""}
+                  onChange={handleInputChange}
                   className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded-lg py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
-                  readOnly
                 />
               </div>
-              <div className="w-full md:w-1/2 px-3 mb-2">
+              <div className="w-full md:w-1/2 px-3">
                 <label
                   htmlFor="phoneNo"
                   className="block uppercase tracking-wide text-gray-700 text-xs font-medium mb-2"
@@ -97,13 +182,16 @@ const ProfilePage = () => {
                   type="text"
                   id="phoneNo"
                   name="phoneNo"
-                  value={userData?.phoneNo || ""}
-                  // onChange={handleInputChange}
+                  value={formValues.phoneNo || ""}
+                  onChange={handleInputChange}
                   className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded-lg py-3 px-4 leading-tight focus:outline-none focus:bg-white"
-                  placeholder="Please Edit your profile"                  readOnly
+                  placeholder="+91"
                 />
+                {phoneError && (
+                  <p className="text-red-500 text-xs mt-1">{phoneError}</p>
+                )}
               </div>
-              <div className="w-full md:w-1/2 px-3 mb-2">
+              <div className="w-full md:w-1/2 px-3">
                 <label
                   htmlFor="email"
                   className="block uppercase tracking-wide text-gray-700 text-xs font-medium mb-2"
@@ -111,16 +199,16 @@ const ProfilePage = () => {
                   Email*
                 </label>
                 <input
-                  type="text"
+                  type="email"
                   id="email"
                   name="email"
-                  value={userData?.email || ""}
-                  // onChange={handleInputChange}
+                  value={formValues.email}
                   className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded-lg py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
+                  placeholder="xyz@gmail.com"
                   readOnly
                 />
               </div>
-              <div className="w-full md:w-1/2 px-3 mb-2">
+              <div className="w-full md:w-1/2 px-3">
                 {/* Other input fields */}
                 <label
                   htmlFor="state"
@@ -128,17 +216,20 @@ const ProfilePage = () => {
                 >
                   State*
                 </label>
-                <input
+                <select
                   id="state"
                   name="state"
-                  value={userData?.state || ""}
-                  // onChange={handleInputChange}
+                  value={formValues.state || ""}
+                  onChange={handleInputChange}
                   className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded-lg py-3 px-4 leading-tight focus:outline-none focus:bg-white"
-                  type="text"
-                   placeholder="Please Edit your profile"
-                  readOnly
-                />
-                
+                >
+                  <option value="">Select State</option>
+                  {states.map((state) => (
+                    <option key={state} value={state}>
+                      {state}
+                    </option>
+                  ))}
+                </select>
               </div>
               <div className="w-full md:w-1/2 px-3 mb-2">
                 <label
@@ -151,10 +242,9 @@ const ProfilePage = () => {
                   type="text"
                   id="businessAddress"
                   name="businessAddress"
-                  value={userData?.businessAddress || ""}
+                  value={formValues.businessAddress || ""}
+                  onChange={handleInputChange}
                   className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded-lg py-3 px-4 leading-tight focus:outline-none focus:bg-white"
-                   placeholder="Please Edit your profile"
-                  readOnly
                 />
               </div>
               <div className="w-full md:w-1/2 px-3 mb-2">
@@ -165,17 +255,18 @@ const ProfilePage = () => {
                   Pincode*
                 </label>
                 <input
-                  type="text"
+                  type="number"
                   id="pincode"
                   name="pincode"
-                  value={userData?.pincode || ""}
-                  // onChange={handleInputChange}
+                  value={formValues.pincode || ""}
+                  onChange={handleInputChange}
                   className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded-lg py-3 px-4 leading-tight focus:outline-none focus:bg-white"
-                   placeholder="Please Edit your profile"
-                  readOnly
                 />
+                {pinError && (
+                  <p className="text-red-500 text-xs mt-1">{pinError}</p>
+                )}
               </div>
-              <div className="w-full md:w-1/2 px-3 mb-2">
+              <div className="w-full px-3 mb-2">
                 <label
                   htmlFor="businessDetails"
                   className="block uppercase tracking-wide text-gray-700 text-xs font-medium mb-2"
@@ -185,20 +276,20 @@ const ProfilePage = () => {
                 <textarea
                   id="businessDetails"
                   name="businessDetails"
-                  value={userData?.desc || ""}
+                  value={formValues.businessDetails || ""}
+                  onChange={handleInputChange}
                   className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded-lg py-3 px-4 leading-tight focus:outline-none focus:bg-white"
                   rows="5"
-                  readOnly
                 ></textarea>
               </div>
             </div>
-            <div className="mt-2">
-              <Link
-                to={"/profile/edit/"+userId}
-                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded"
+            <div className="mt-4">
+              <button
+                type="submit"
+                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
               >
-                Edit Profile
-              </Link>
+                Update
+              </button>
             </div>
           </form>
         </div>
@@ -210,4 +301,4 @@ const ProfilePage = () => {
   );
 };
 
-export default ProfilePage;
+export default EditProfile;

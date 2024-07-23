@@ -11,6 +11,8 @@ const EditProfile = () => {
   const [userData, setUserData] = useState(null);
 
   const [formValues, setFormValues] = useState(user.user || {});
+  const [phoneError, setPhoneError] = useState("");
+  const [pinError, setPinError] = useState("");
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -34,6 +36,7 @@ const EditProfile = () => {
 
     setFormValues({ ...formValues, [name]: value });
   };
+
   const { userId } = useParams();
 
   const getProfileData = async () => {
@@ -46,9 +49,11 @@ const EditProfile = () => {
       return null;
     }
   };
+
   useEffect(() => {
     getProfileData();
   }, []);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -70,7 +75,7 @@ const EditProfile = () => {
       desc: formValues?.businessDetails || "",
       phoneNo: formValues?.phoneNo || "",
     };
-  
+
     const url = `${APP_URL}/user/update-profile`;
     const token = user.token;
 
@@ -88,7 +93,7 @@ const EditProfile = () => {
 
   return (
     <div className="w-full justify-between shadow-md p-4 rounded-lg bg-white">
-      <h1 className="text-4xl font-bold   relative">
+      <h1 className="text-4xl font-bold relative">
         <span
           style={{
             backgroundImage: "linear-gradient(to right, #FFA500, #FF6347)",
@@ -99,8 +104,8 @@ const EditProfile = () => {
           Profile Page
         </span>
       </h1>
-      <div className="flex flex-wrap  ">
-        <div className="w-1/2 pr-4   flex items-center justify-center   ">
+      <div className="flex flex-wrap">
+        <div className="w-1/2 pr-4 flex items-center justify-center">
           <img
             src={user?.user?.profileUrl}
             alt="Sample Image"
@@ -144,7 +149,7 @@ const EditProfile = () => {
                   className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded-lg py-3 px-4 leading-tight focus:outline-none focus:bg-white"
                 />
               </div>
-              <div className="w-full md:w-1/2 px-3  ">
+              <div className="w-full md:w-1/2 px-3">
                 <label
                   htmlFor="gstin"
                   className="block uppercase tracking-wide text-gray-700 text-xs font-medium mb-2"
@@ -160,7 +165,7 @@ const EditProfile = () => {
                   className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded-lg py-3 px-4 mb-3 leading-tight focus:outline-none focus:bg-white"
                 />
               </div>
-              <div className="w-full md:w-1/2 px-3  ">
+              <div className="w-full md:w-1/2 px-3">
                 <label
                   htmlFor="phoneNo"
                   className="block uppercase tracking-wide text-gray-700 text-xs font-medium mb-2"
@@ -176,8 +181,11 @@ const EditProfile = () => {
                   className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded-lg py-3 px-4 leading-tight focus:outline-none focus:bg-white"
                   placeholder="+91"
                 />
+                {phoneError && (
+                  <p className="text-red-500 text-xs mt-1">{phoneError}</p>
+                )}
               </div>
-              <div className="w-full md:w-1/2 px-3  ">
+              <div className="w-full md:w-1/2 px-3">
                 <label
                   htmlFor="email"
                   className="block uppercase tracking-wide text-gray-700 text-xs font-medium mb-2"
@@ -194,7 +202,7 @@ const EditProfile = () => {
                   readOnly
                 />
               </div>
-              <div className="w-full md:w-1/2 px-3 ">
+              <div className="w-full md:w-1/2 px-3">
                 {/* Other input fields */}
                 <label
                   htmlFor="state"
@@ -244,12 +252,15 @@ const EditProfile = () => {
                   type="number"
                   id="pincode"
                   name="pincode"
-                  value={formValues?.pincode || ""}
+                  value={formValues.pincode || ""}
                   onChange={handleInputChange}
                   className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded-lg py-3 px-4 leading-tight focus:outline-none focus:bg-white"
                 />
+                {pinError && (
+                  <p className="text-red-500 text-xs mt-1">{pinError}</p>
+                )}
               </div>
-              <div className="w-full  px-3 mb-2">
+              <div className="w-full px-3 mb-2">
                 <label
                   htmlFor="businessDetails"
                   className="block uppercase tracking-wide text-gray-700 text-xs font-medium mb-2"
