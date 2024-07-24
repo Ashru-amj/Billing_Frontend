@@ -14,7 +14,7 @@ import toast, { Toaster } from 'react-hot-toast';
 const SettingsPage = () => {
   const user = useSelector((state) => state.user.user);
   const [accountSettings, setAccountSettings] = useState({
-    email: "",
+    email: user?.user?.email || "",
     oldpassword: "",
     newpassword: "",
   });
